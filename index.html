@@ -10,6 +10,7 @@
 <style>
   :root {
     --primary: #a0312a;
+    --primary-hover: #882a24;
     --secondary: #f8b135;
     --tertiary: #e75a1f;
     --tertiary-hover: #c94a16;
@@ -73,7 +74,6 @@
   .prop-card {
     background: var(--card);
     border: 1px solid var(--line);
-    border-left: 5px solid var(--primary);
     border-radius: var(--radius);
     overflow: hidden;
     transition: box-shadow 0.2s ease;
@@ -96,7 +96,7 @@
   }
 
   .prop-toggle:focus-visible {
-    outline: 3px solid var(--tertiary);
+    outline: 3px solid var(--primary);
     outline-offset: 2px;
     border-radius: 8px;
   }
@@ -149,13 +149,13 @@
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: var(--tertiary);
+    background: var(--primary);
     color: #fff;
     transition: transform 0.25s ease, background 0.2s ease;
   }
 
   .prop-toggle:hover .prop-chevron {
-    background: var(--tertiary-hover);
+    background: var(--primary-hover);
   }
 
   .prop-card.is-open .prop-chevron {
@@ -264,15 +264,23 @@
     return card;
   }
 
-  function wireUpToggle(card) {
+  function setCardOpen(card, shouldOpen) {
     const btn = card.querySelector(".prop-toggle");
     const panel = card.querySelector(".prop-details");
+    btn.setAttribute("aria-expanded", String(shouldOpen));
+    panel.setAttribute("aria-hidden", String(!shouldOpen));
+    card.classList.toggle("is-open", shouldOpen);
+    panel.style.maxHeight = shouldOpen ? panel.scrollHeight + "px" : "0px";
+  }
+
+  function wireUpToggle(card, grid) {
+    const btn = card.querySelector(".prop-toggle");
     btn.addEventListener("click", () => {
-      const isOpen = btn.getAttribute("aria-expanded") === "true";
-      btn.setAttribute("aria-expanded", String(!isOpen));
-      panel.setAttribute("aria-hidden", String(isOpen));
-      card.classList.toggle("is-open", !isOpen);
-      panel.style.maxHeight = isOpen ? "0px" : panel.scrollHeight + "px";
+      const isOpen = card.classList.contains("is-open");
+      grid.querySelectorAll(".prop-card.is-open").forEach((openCard) => {
+        if (openCard !== card) setCardOpen(openCard, false);
+      });
+      setCardOpen(card, !isOpen);
     });
   }
 
@@ -282,7 +290,7 @@
     PROPOSITIONS.forEach((prop) => {
       const card = createCard(prop);
       grid.appendChild(card);
-      wireUpToggle(card);
+      wireUpToggle(card, grid);
     });
   }
 
