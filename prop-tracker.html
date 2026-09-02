@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ballot Measures We're Tracking — ChicoSol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Oswald:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #a0312a;
+    --secondary: #f8b135;
+    --tertiary: #e75a1f;
+    --tertiary-hover: #c94a16;
+    --ink: #2b211d;
+    --muted: #5c554f;
+    --line: #e7ded2;
+    --paper: #ffffff;
+    --card: #fffdfb;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 2.5rem 1.5rem 3.5rem;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .prop-tracker {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .prop-tracker__header {
+    margin-bottom: 1.75rem;
+  }
+
+  .prop-tracker__header h1 {
+    font-family: 'Oswald', 'Work Sans', sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    color: var(--primary);
+    margin: 0 0 0.4rem;
+  }
+
+  .prop-tracker__header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+    max-width: 60ch;
+  }
+
+  .prop-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  .prop-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--primary);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .prop-card:hover {
+    box-shadow: 0 4px 14px rgba(38, 30, 26, 0.08);
+  }
+
+  .prop-toggle {
+    all: unset;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 1.1rem 1.25rem 0.25rem;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+
+  .prop-toggle:focus-visible {
+    outline: 3px solid var(--tertiary);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+
+  .prop-header {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    row-gap: 0.35rem;
+  }
+
+  .prop-badge {
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    background: var(--secondary);
+    color: var(--ink);
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    align-self: center;
+  }
+
+  .prop-num {
+    font-family: 'Oswald', Georgia, serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+
+  .prop-divider {
+    color: var(--line);
+    font-weight: 400;
+  }
+
+  .prop-title {
+    font-family: 'Oswald', Georgia, serif;
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: var(--ink);
+  }
+
+  .prop-chevron {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--tertiary);
+    color: #fff;
+    transition: transform 0.25s ease, background 0.2s ease;
+  }
+
+  .prop-toggle:hover .prop-chevron {
+    background: var(--tertiary-hover);
+  }
+
+  .prop-card.is-open .prop-chevron {
+    transform: rotate(90deg);
+  }
+
+  .prop-summary {
+    margin: 0.4rem 0 1.1rem;
+    padding: 0 3.25rem 0 1.25rem;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+
+  .prop-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.28s ease;
+  }
+
+  .prop-details__inner {
+    padding: 0.9rem 1.25rem 1.25rem;
+    border-top: 1px solid var(--line);
+    margin: 0 1.25rem;
+  }
+
+  .prop-details__inner p {
+    margin: 0;
+    color: var(--ink);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 640px) {
+    .prop-grid {
+      grid-template-columns: 1fr;
+    }
+    body {
+      padding: 1.75rem 1rem 2.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .prop-chevron, .prop-details, .prop-card {
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="prop-tracker">
+  <header class="prop-tracker__header">
+    <h1>Ballot measures we're tracking</h1>
+    <p>Updated as new measures are filed. Tap a card for details on what it would do.</p>
+  </header>
+
+  <div class="prop-grid" id="prop-grid"></div>
+</div>
+
+<script>
+  // ── Add new propositions here. Each object is one card. ──
+  // See the accompanying "how-to-add-a-card.md" for field details.
+  const PROPOSITIONS = [
+    {
+      id: "prop-5",
+      number: "Prop 5",
+      title: "Recall reform",
+      summary: "Delay replacing recalled state officials",
+      details: "Placeholder — replace with 2–3 sentences on what this measure would do, who is behind it, and where it stands.",
+      isNew: false
+    },
+    {
+      id: "prop-1",
+      number: "Prop 1",
+      title: "Housing bond",
+      summary: "Borrow $11.25 billion for housing",
+      details: "Placeholder — replace with 2–3 sentences on what this measure would do, who is behind it, and where it stands.",
+      isNew: false
+    }
+  ];
+
+  function createCard(prop) {
+    const panelId = prop.id + "-panel";
+    const card = document.createElement("article");
+    card.className = "prop-card";
+    card.id = prop.id;
+    card.innerHTML = `
+      <button class="prop-toggle" type="button" aria-expanded="false" aria-controls="${panelId}">
+        <span class="prop-header">
+          ${prop.isNew ? '<span class="prop-badge">New</span>' : ""}
+          <span class="prop-num">${prop.number}</span>
+          <span class="prop-divider" aria-hidden="true">|</span>
+          <span class="prop-title">${prop.title}</span>
+        </span>
+        <span class="prop-chevron" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </button>
+      <p class="prop-summary">${prop.summary}</p>
+      <div class="prop-details" id="${panelId}" role="region" aria-hidden="true">
+        <div class="prop-details__inner"><p>${prop.details}</p></div>
+      </div>
+    `;
+    return card;
+  }
+
+  function wireUpToggle(card) {
+    const btn = card.querySelector(".prop-toggle");
+    const panel = card.querySelector(".prop-details");
+    btn.addEventListener("click", () => {
+      const isOpen = btn.getAttribute("aria-expanded") === "true";
+      btn.setAttribute("aria-expanded", String(!isOpen));
+      panel.setAttribute("aria-hidden", String(isOpen));
+      card.classList.toggle("is-open", !isOpen);
+      panel.style.maxHeight = isOpen ? "0px" : panel.scrollHeight + "px";
+    });
+  }
+
+  function renderPropTracker() {
+    const grid = document.getElementById("prop-grid");
+    grid.innerHTML = "";
+    PROPOSITIONS.forEach((prop) => {
+      const card = createCard(prop);
+      grid.appendChild(card);
+      wireUpToggle(card);
+    });
+  }
+
+  renderPropTracker();
+
+  // Keep open panels sized correctly if the window is resized.
+  window.addEventListener("resize", () => {
+    document.querySelectorAll(".prop-card.is-open .prop-details").forEach((panel) => {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+    });
+  });
+</script>
+
+</body>
+</html>
