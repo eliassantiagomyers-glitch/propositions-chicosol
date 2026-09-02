@@ -1,3 +1,10 @@
+# How to update the site
+
+# How to push to github:
+# normal push: git add . && git commit -m "message" && git push origin main
+# if github is ahead of local, run this: git pull --rebase origin main
+
+
 # Adding a new proposition card
 
 All the cards are generated from one JavaScript array near the bottom of
